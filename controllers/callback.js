@@ -62,7 +62,6 @@ const fetchPlaylists = async (accessToken) => {
       }
     );
 
-    //FIX THIS
     return response.data.items;
     //const songs = response.data.items.map((song) => console.log(song));
   } catch (error) {
