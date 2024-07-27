@@ -5,7 +5,7 @@ const playlistSchema = new mongoose.Schema({
   spotifyId: { type: String },
   name: { type: String },
   description: { type: String },
-  tracks: [{ trackId: { type: mongoose.Schema.Types.ObjectId, ref: "Song" } }],
+  tracks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Song" }],
   createdAt: { type: Date, default: Date.now, expires: 3600 }, // TTL index: 3600 seconds = 1 hour
 });
 

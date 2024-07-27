@@ -1,12 +1,13 @@
 const mongoose = require("mongoose");
 
 const songSchema = new mongoose.Schema({
-  spotifyId: { type: String, unique: true },
+  // id: { type: Number },
   name: { type: String },
   artist: { type: String },
   album: { type: String },
   genre: { type: String },
-  releaseYear: { type: Number },
+  release_date: { type: String },
+  spotifyID: { type: String, required: true, unique: true },
   createdAt: { type: Date, default: Date.now, expires: 3600 }, // TTL index: 3600 seconds = 1 hour
 });
 
