@@ -130,7 +130,7 @@ const saveTracks = async (playlistID, token) => {
 const savePlaylist = async (userId, spotifyPlaylist, token) => {
   const { id, name, description, tracks } = spotifyPlaylist;
 
-  const songs = await saveTracks(id, token);
+  //const songs = await saveTracks(id, token);
 
   // Create a new playlist if it doesn't exist
   let playlist = new Playlist({
@@ -138,7 +138,7 @@ const savePlaylist = async (userId, spotifyPlaylist, token) => {
     spotifyId: id,
     name: name,
     description: description,
-    tracks: songs,
+    tracks: [],
     createdAt: Date.now(), // Set the `createdAt` field
   });
 
@@ -156,7 +156,6 @@ const createUser = async (accessToken) => {
 
     if (user) {
       // User found, return user data
-
       return user;
     } else {
       // User not found, create a new user in the database
@@ -175,7 +174,7 @@ const createUser = async (accessToken) => {
 
       //save the users playlists and songs into DB
 
-      //get users spotify playlists
+      //get users spotify playlists for initial display
       const playlists = await fetchPlaylists(accessToken);
 
       for (const playlist of playlists) {
