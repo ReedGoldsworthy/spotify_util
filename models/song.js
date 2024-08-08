@@ -5,9 +5,15 @@ const songSchema = new mongoose.Schema({
   name: { type: String },
   artist: { type: String },
   album: { type: String },
-  genre: { type: String },
   release_date: { type: String },
   spotifyID: { type: String, required: true, unique: true },
+  genres: { type: Array },
+  acousticness: { type: Number },
+  danceability: { type: Number },
+  duration: { type: Number },
+  energy: { type: Number },
+  instrumentalness: { type: Number },
+  valence: { type: Number },
   createdAt: { type: Date, default: Date.now, expires: 3600 }, // TTL index: 3600 seconds = 1 hour
 });
 

@@ -4,7 +4,6 @@ const querystring = require("querystring");
 const config = require("../utils/config"); // Your Spotify credentials
 const Playlist = require("../models/playlist");
 const User = require("../models/user");
-const Song = require("../models/song");
 
 // sends GET request with access token to spotify api to get profile data
 const fetchSpotifyProfile = async (accessToken) => {
@@ -71,66 +70,9 @@ const fetchPlaylists = async (accessToken) => {
   }
 };
 
-// gets tracks of a playlist from playlistID and stores tracks into DB
-const saveTracks = async (playlistID, token) => {
-  try {
-    const response = await axios.get(
-      `https://api.spotify.com/v1/playlists/${playlistID}/tracks`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    const tracks = response.data.items.map((song) => song.track);
-    // const songs = tracks.map((track) => track.name);
-    const savedSongIDs = [];
-
-    for (let index = 0; index < tracks.length; index++) {
-      const track = tracks[index];
-
-      if (!track || !track.id) {
-        console.warn(
-          `Track at index ${index} is invalid or has a null/undefined spotifyID. Skipping.`
-        );
-        continue;
-      }
-
-      let song = await Song.findOne({ spotifyID: track.id });
-
-      if (!song) {
-        const songObject = new Song({
-          name: track.name,
-          artist: track.artists[0].name,
-          album: track.album.name,
-          release_date: track.album.release_date,
-          // id: index,
-          genre: "brat",
-          // playlistID: playlistID,
-          spotifyID: track.id,
-          createdAt: Date.now(), // Add createdAt field
-        });
-
-        const savedSong = await songObject.save();
-        savedSongIDs.push(savedSong._id); // Add the ID of the saved song to the array
-      } else {
-        savedSongIDs.push(song._id);
-      }
-    }
-
-    return savedSongIDs;
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to fetch playlist tracks");
-  }
-};
-
 // Function to save a playlist and its songs to the database
 const savePlaylist = async (userId, spotifyPlaylist, token) => {
   const { id, name, description, tracks } = spotifyPlaylist;
-
-  //const songs = await saveTracks(id, token);
 
   // Create a new playlist if it doesn't exist
   let playlist = new Playlist({
