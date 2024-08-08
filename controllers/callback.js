@@ -4,21 +4,14 @@ const querystring = require("querystring");
 const config = require("../utils/config"); // Your Spotify credentials
 const Playlist = require("../models/playlist");
 const User = require("../models/user");
+const {
+  fetchSpotifyProfile,
+  fetchPlaylists,
+} = require("../services/spotifyService");
 
-// sends GET request with access token to spotify api to get profile data
-const fetchSpotifyProfile = async (accessToken) => {
-  try {
-    const response = await axios.get("https://api.spotify.com/v1/me", {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching Spotify profile:", error);
-    throw new Error("Failed to fetch Spotify profile");
-  }
-};
+const { savePlaylist } = require("../services/playlistService");
+
+const callbackRouter = express.Router();
 
 // sends POST request to get access token from spotify API
 const getToken = async (code) => {
@@ -48,43 +41,6 @@ const getToken = async (code) => {
   } catch (error) {
     console.error("Error getting token", error.response.data);
   }
-};
-
-// sends GET request with access token to spotify api to get playlist data
-const fetchPlaylists = async (accessToken) => {
-  try {
-    const response = await axios.get(
-      "https://api.spotify.com/v1/me/playlists",
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-
-    return response.data.items;
-    //const songs = response.data.items.map((song) => console.log(song));
-  } catch (error) {
-    console.error("Error fetching Spotify profile:", error);
-    throw new Error("Failed to fetch Spotify profile");
-  }
-};
-
-// Function to save a playlist and its songs to the database
-const savePlaylist = async (userId, spotifyPlaylist, token) => {
-  const { id, name, description, tracks } = spotifyPlaylist;
-
-  // Create a new playlist if it doesn't exist
-  let playlist = new Playlist({
-    userId: userId,
-    spotifyId: id,
-    name: name,
-    description: description,
-    tracks: [],
-    createdAt: Date.now(), // Set the `createdAt` field
-  });
-
-  await playlist.save();
 };
 
 // Checks if user is in MongoDB, if not then adds user & playlists to spotify
@@ -120,7 +76,7 @@ const createUser = async (accessToken) => {
       const playlists = await fetchPlaylists(accessToken);
 
       for (const playlist of playlists) {
-        await savePlaylist(user._id, playlist, accessToken);
+        await savePlaylist(user._id, playlist);
       }
 
       // Return the newly created user data
@@ -131,8 +87,6 @@ const createUser = async (accessToken) => {
     return;
   }
 };
-
-const callbackRouter = express.Router();
 
 callbackRouter.get("/", async (req, res) => {
   const code = req.query.code;
