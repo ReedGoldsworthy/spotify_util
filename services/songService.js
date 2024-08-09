@@ -2,7 +2,7 @@ const Song = require("../models/song");
 const axios = require("axios");
 const { fetchAudioFeatures, fetchGenres } = require("./spotifyService");
 
-// gets tracks of a playlist from playlistID and stores tracks into DB. Function uses fetchGenres & fetchAudioFeatures
+// gets tracks of a playlist from playlistID and stores tracks into DB. Function uses fetchGenres & fetchAudioFeatures to get details about track
 const saveTracks = async (playlistID, token) => {
   try {
     const response = await axios.get(

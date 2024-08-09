@@ -167,9 +167,168 @@ const getGenres = async (playlistID) => {
   }
 };
 
+//Aggregates data to get the Counts & Average of audio features (i.e Danceability, instrumentallness, Valence, etc...) for a playlist in our DB
+const getAttributes = async (playlistID) => {
+  try {
+    const result = await Playlist.aggregate([
+      {
+        $match: { spotifyId: playlistID },
+      },
+      {
+        $lookup: {
+          from: "songs",
+          localField: "tracks",
+          foreignField: "_id",
+          as: "songDetails",
+        },
+      },
+      {
+        $unwind: "$songDetails",
+      },
+      {
+        $project: {
+          // Round attributes to the nearest 0.1
+          danceability: {
+            $round: [{ $multiply: ["$songDetails.danceability", 10] }, 0],
+          },
+          acousticness: {
+            $round: [{ $multiply: ["$songDetails.acousticness", 10] }, 0],
+          },
+          energy: {
+            $round: [{ $multiply: ["$songDetails.energy", 10] }, 0],
+          },
+          instrumentalness: {
+            $round: [{ $multiply: ["$songDetails.instrumentalness", 10] }, 0],
+          },
+          valence: {
+            $round: [{ $multiply: ["$songDetails.valence", 10] }, 0],
+          },
+        },
+      },
+      {
+        $facet: {
+          // Aggregation for counts by rounded values
+          danceability: [
+            {
+              $group: {
+                _id: "$danceability", // Group by rounded danceability
+                count: { $sum: 1 }, // Count occurrences
+              },
+            },
+            {
+              $sort: { _id: 1 }, // Sort by danceability in ascending order
+            },
+          ],
+          acousticness: [
+            {
+              $group: {
+                _id: "$acousticness", // Group by rounded acousticness
+                count: { $sum: 1 }, // Count occurrences
+              },
+            },
+            {
+              $sort: { _id: 1 }, // Sort by acousticness in ascending order
+            },
+          ],
+          energy: [
+            {
+              $group: {
+                _id: "$energy", // Group by rounded energy
+                count: { $sum: 1 }, // Count occurrences
+              },
+            },
+            {
+              $sort: { _id: 1 }, // Sort by energy in ascending order
+            },
+          ],
+          instrumentalness: [
+            {
+              $group: {
+                _id: "$instrumentalness", // Group by rounded instrumentalness
+                count: { $sum: 1 }, // Count occurrences
+              },
+            },
+            {
+              $sort: { _id: 1 }, // Sort by instrumentalness in ascending order
+            },
+          ],
+          valence: [
+            {
+              $group: {
+                _id: "$valence", // Group by rounded valence
+                count: { $sum: 1 }, // Count occurrences
+              },
+            },
+            {
+              $sort: { _id: 1 }, // Sort by valence in ascending order
+            },
+          ],
+          // Aggregation for overall averages
+          averages: [
+            {
+              $group: {
+                _id: null,
+                averageDanceability: { $avg: "$danceability" },
+                averageAcousticness: { $avg: "$acousticness" },
+                averageEnergy: { $avg: "$energy" },
+                averageInstrumentalness: { $avg: "$instrumentalness" },
+                averageValence: { $avg: "$valence" },
+              },
+            },
+          ],
+        },
+      },
+      {
+        $project: {
+          danceability: 1,
+          acousticness: 1,
+          energy: 1,
+          instrumentalness: 1,
+          valence: 1,
+          averages: { $arrayElemAt: ["$averages", 0] }, // Access the averages array
+        },
+      },
+    ]);
+
+    // Access the results
+    const danceability = result[0].danceability;
+    const acousticness = result[0].acousticness;
+    const energy = result[0].energy;
+    const instrumentalness = result[0].instrumentalness;
+    const valence = result[0].valence;
+    const averages = result[0].averages || {}; // Default to empty object if averages are not present
+
+    return {
+      danceability,
+      acousticness,
+      energy,
+      instrumentalness,
+      valence,
+      averages,
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      danceability: [],
+      acousticness: [],
+      energy: [],
+      instrumentalness: [],
+      valence: [],
+      averages: {
+        averageDanceability: 0,
+        averageAcousticness: 0,
+        averageEnergy: 0,
+        averageInstrumentalness: 0,
+        averageValence: 0,
+      },
+    };
+  }
+};
+
 module.exports = {
   savePlaylist,
   getArtists,
   getYears,
   getGenres,
+  getAttributes,
 };

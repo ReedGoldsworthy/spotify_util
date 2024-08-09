@@ -10,26 +10,14 @@ const {
   getArtists,
   getYears,
   getGenres,
+  getAttributes,
 } = require("../services/playlistService");
 
+//this route returns all playlists from our DB, might want to specify a user to get playlists from in future
 dataRouter.get("/playlist", async (req, res) => {
   Playlist.find({}).then((playlist) => {
     res.json(playlist);
   });
-});
-
-dataRouter.get("/playlist/:id", async (req, res) => {
-  try {
-    const playlist = await Playlist.findOne({ spotifyId: req.params.id });
-    if (playlist) {
-      res.json(playlist);
-    } else {
-      res.status(404).send("Playlist not found");
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal server error");
-  }
 });
 
 // This route takes a user & playlist ID and returns the tracks associated with that user's playlist from the DB.
@@ -75,12 +63,7 @@ dataRouter.get("/:userID/playlist/:id/tracks", async (req, res) => {
   }
 });
 
-dataRouter.get("/songs", async (req, res) => {
-  Song.find({}).then((song) => {
-    res.json(song);
-  });
-});
-
+//this route takes a user and playlist ID and returns the aggregated data for the tracks of that playlist from our DB
 dataRouter.get("/:userID/playlist/:id/info", async (req, res) => {
   try {
     const { userID, id } = req.params;
@@ -93,6 +76,14 @@ dataRouter.get("/:userID/playlist/:id/info", async (req, res) => {
     const years = await getYears(id);
     const artists = await getArtists(id);
     const genres = await getGenres(id);
+    const {
+      danceability,
+      acousticness,
+      energy,
+      instrumentalness,
+      valence,
+      averages,
+    } = await getAttributes(id);
 
     const result = {
       numTracks: playlist.tracks.length,
@@ -100,6 +91,12 @@ dataRouter.get("/:userID/playlist/:id/info", async (req, res) => {
       years: years,
       artists: artists,
       genres: genres,
+      danceability: danceability,
+      acousticness: acousticness,
+      energy: energy,
+      instrumentalness: instrumentalness,
+      valence: valence,
+      averages: averages,
     };
 
     res.json(result);
