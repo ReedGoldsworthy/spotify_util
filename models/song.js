@@ -8,6 +8,7 @@ const songSchema = new mongoose.Schema({
   release_date: { type: String },
   spotifyID: { type: String, required: true, unique: true },
   genres: { type: Array },
+  popularity: { type: Number },
   acousticness: { type: Number },
   danceability: { type: Number },
   duration: { type: Number },

@@ -75,7 +75,7 @@ dataRouter.get("/:userID/playlist/:id/info", async (req, res) => {
 
     const years = await getYears(id);
     const artists = await getArtists(id);
-    const genres = await getGenres(id);
+    const { parentGenres, allGenres } = await getGenres(id);
     const {
       danceability,
       acousticness,
@@ -83,6 +83,7 @@ dataRouter.get("/:userID/playlist/:id/info", async (req, res) => {
       instrumentalness,
       valence,
       averages,
+      popularity,
     } = await getAttributes(id);
 
     const result = {
@@ -90,13 +91,15 @@ dataRouter.get("/:userID/playlist/:id/info", async (req, res) => {
       numArtists: artists.length,
       years: years,
       artists: artists,
-      genres: genres,
+      allGenres: allGenres,
       danceability: danceability,
       acousticness: acousticness,
       energy: energy,
       instrumentalness: instrumentalness,
+      popularity: popularity,
       valence: valence,
       averages: averages,
+      parentGenres: parentGenres,
     };
 
     res.json(result);

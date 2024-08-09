@@ -124,14 +124,13 @@ const getYears = async (playlistID) => {
   }
 };
 
-//Aggregates data to count occurrences of each genre in a playlist from our DB.
+//This behomoth aggregates data to count occurences of each genre & also groups genres into parent genres to get the parent genre count of a playlist in our DB
 const getGenres = async (playlistID) => {
   try {
     const result = await Playlist.aggregate([
       {
         $match: { spotifyId: playlistID },
       },
-
       {
         $lookup: {
           from: "songs",
@@ -146,24 +145,284 @@ const getGenres = async (playlistID) => {
       {
         $unwind: "$songDetails.genres",
       },
-
-      //Group by genre and count occurrences
       {
-        $group: {
-          _id: "$songDetails.genres", // Group by genre
-          count: { $sum: 1 }, // Count occurrences
+        $addFields: {
+          parentGenre: {
+            $switch: {
+              branches: [
+                // Sub-genre mapping to parent genres
+                {
+                  case: {
+                    $in: [
+                      "$songDetails.genres",
+                      [
+                        "alternative rock",
+                        "austindie",
+                        "indie rock",
+                        "modern rock",
+                        "classic rock",
+                        "punk rock",
+                      ],
+                    ],
+                  },
+                  then: "Rock",
+                },
+                {
+                  case: {
+                    $in: [
+                      "$songDetails.genres",
+                      ["techno", "house", "trance", "dubstep", "drum and bass"],
+                    ],
+                  },
+                  then: "Electronic",
+                },
+                {
+                  case: {
+                    $in: [
+                      "$songDetails.genres",
+                      ["jazz", "smooth jazz", "fusion", "bebop"],
+                    ],
+                  },
+                  then: "Jazz",
+                },
+                {
+                  case: {
+                    $in: [
+                      "$songDetails.genres",
+                      ["pop rock", "dance-pop", "synthpop", "electropop"],
+                    ],
+                  },
+                  then: "Pop",
+                },
+                {
+                  case: {
+                    $in: [
+                      "$songDetails.genres",
+                      ["trap", "conscious rap", "gangsta rap", "boom bap"],
+                    ],
+                  },
+                  then: "Hip-Hop/Rap",
+                },
+                {
+                  case: {
+                    $in: [
+                      "$songDetails.genres",
+                      [
+                        "traditional country",
+                        "country pop",
+                        "bluegrass",
+                        "outlaw country",
+                      ],
+                    ],
+                  },
+                  then: "Country",
+                },
+                {
+                  case: {
+                    $in: [
+                      "$songDetails.genres",
+                      [
+                        "delta blues",
+                        "chicago blues",
+                        "electric blues",
+                        "modern blues",
+                      ],
+                    ],
+                  },
+                  then: "Blues",
+                },
+                {
+                  case: {
+                    $in: [
+                      "$songDetails.genres",
+                      ["roots reggae", "dancehall", "dub", "lovers rock"],
+                    ],
+                  },
+                  then: "Reggae",
+                },
+                {
+                  case: {
+                    $in: [
+                      "$songDetails.genres",
+                      [
+                        "heavy metal",
+                        "thrash metal",
+                        "death metal",
+                        "black metal",
+                      ],
+                    ],
+                  },
+                  then: "Metal",
+                },
+                {
+                  case: {
+                    $in: [
+                      "$songDetails.genres",
+                      ["neo-soul", "classic soul", "modern r&b", "motown"],
+                    ],
+                  },
+                  then: "R&B/Soul",
+                },
+                {
+                  case: {
+                    $in: [
+                      "$songDetails.genres",
+                      [
+                        "baroque",
+                        "classical",
+                        "romantic",
+                        "modern classical",
+                        "contemporary classical",
+                      ],
+                    ],
+                  },
+                  then: "Classical",
+                },
+                // Regex-based classification for remaining genres
+                {
+                  case: {
+                    $regexMatch: {
+                      input: "$songDetails.genres",
+                      regex: /rock/i,
+                    },
+                  },
+                  then: "Rock",
+                },
+                {
+                  case: {
+                    $regexMatch: {
+                      input: "$songDetails.genres",
+                      regex: /electronic/i,
+                    },
+                  },
+                  then: "Electronic",
+                },
+                {
+                  case: {
+                    $regexMatch: {
+                      input: "$songDetails.genres",
+                      regex: /jazz/i,
+                    },
+                  },
+                  then: "Jazz",
+                },
+                {
+                  case: {
+                    $regexMatch: {
+                      input: "$songDetails.genres",
+                      regex: /pop/i,
+                    },
+                  },
+                  then: "Pop",
+                },
+                {
+                  case: {
+                    $regexMatch: {
+                      input: "$songDetails.genres",
+                      regex: /hip-hop|rap/i,
+                    },
+                  },
+                  then: "Hip-Hop/Rap",
+                },
+                {
+                  case: {
+                    $regexMatch: {
+                      input: "$songDetails.genres",
+                      regex: /country/i,
+                    },
+                  },
+                  then: "Country",
+                },
+                {
+                  case: {
+                    $regexMatch: {
+                      input: "$songDetails.genres",
+                      regex: /blues/i,
+                    },
+                  },
+                  then: "Blues",
+                },
+                {
+                  case: {
+                    $regexMatch: {
+                      input: "$songDetails.genres",
+                      regex: /reggae/i,
+                    },
+                  },
+                  then: "Reggae",
+                },
+                {
+                  case: {
+                    $regexMatch: {
+                      input: "$songDetails.genres",
+                      regex: /metal/i,
+                    },
+                  },
+                  then: "Metal",
+                },
+                {
+                  case: {
+                    $regexMatch: {
+                      input: "$songDetails.genres",
+                      regex: /r&b|soul/i,
+                    },
+                  },
+                  then: "R&B/Soul",
+                },
+                {
+                  case: {
+                    $regexMatch: {
+                      input: "$songDetails.genres",
+                      regex:
+                        /classical|baroque|romantic|modern classical|contemporary classical/i,
+                    },
+                  },
+                  then: "Classical",
+                },
+              ],
+              default: "Other",
+            },
+          },
         },
       },
-
       {
-        $sort: { count: -1 },
+        $facet: {
+          allGenres: [
+            {
+              $group: {
+                _id: "$songDetails.genres", // Group by individual genre
+                count: { $sum: 1 }, // Count occurrences
+              },
+            },
+            {
+              $sort: { count: -1 },
+            },
+          ],
+          parentGenres: [
+            {
+              $group: {
+                _id: "$parentGenre", // Group by parent genre
+                count: { $sum: 1 }, // Count occurrences
+              },
+            },
+            {
+              $sort: { count: -1 },
+            },
+          ],
+        },
       },
     ]);
 
-    return result;
+    // Return the counts of all genres and parent genres
+    const parentGenres = result[0].parentGenres;
+    const allGenres = result[0].allGenres;
+    return { parentGenres, allGenres };
   } catch (error) {
     console.error(error);
-    return [0];
+    return {
+      parentGenres: [],
+      allGenres: [],
+    };
   }
 };
 
@@ -187,7 +446,7 @@ const getAttributes = async (playlistID) => {
       },
       {
         $project: {
-          // Round attributes to the nearest 0.1
+          // Round attributes to the nearest 0.1 or 10
           danceability: {
             $round: [{ $multiply: ["$songDetails.danceability", 10] }, 0],
           },
@@ -202,6 +461,9 @@ const getAttributes = async (playlistID) => {
           },
           valence: {
             $round: [{ $multiply: ["$songDetails.valence", 10] }, 0],
+          },
+          popularity: {
+            $round: [{ $divide: ["$songDetails.popularity", 10] }, 0], // Round popularity to nearest 10
           },
         },
       },
@@ -263,6 +525,17 @@ const getAttributes = async (playlistID) => {
               $sort: { _id: 1 }, // Sort by valence in ascending order
             },
           ],
+          popularity: [
+            {
+              $group: {
+                _id: "$popularity", // Group by rounded popularity
+                count: { $sum: 1 }, // Count occurrences
+              },
+            },
+            {
+              $sort: { _id: 1 }, // Sort by popularity in ascending order
+            },
+          ],
           // Aggregation for overall averages
           averages: [
             {
@@ -273,6 +546,7 @@ const getAttributes = async (playlistID) => {
                 averageEnergy: { $avg: "$energy" },
                 averageInstrumentalness: { $avg: "$instrumentalness" },
                 averageValence: { $avg: "$valence" },
+                averagePopularity: { $avg: "$popularity" }, // Calculate average popularity
               },
             },
           ],
@@ -285,6 +559,7 @@ const getAttributes = async (playlistID) => {
           energy: 1,
           instrumentalness: 1,
           valence: 1,
+          popularity: 1,
           averages: { $arrayElemAt: ["$averages", 0] }, // Access the averages array
         },
       },
@@ -296,6 +571,7 @@ const getAttributes = async (playlistID) => {
     const energy = result[0].energy;
     const instrumentalness = result[0].instrumentalness;
     const valence = result[0].valence;
+    const popularity = result[0].popularity;
     const averages = result[0].averages || {}; // Default to empty object if averages are not present
 
     return {
@@ -304,6 +580,7 @@ const getAttributes = async (playlistID) => {
       energy,
       instrumentalness,
       valence,
+      popularity,
       averages,
     };
   } catch (error) {
@@ -314,12 +591,14 @@ const getAttributes = async (playlistID) => {
       energy: [],
       instrumentalness: [],
       valence: [],
+      popularity: [],
       averages: {
         averageDanceability: 0,
         averageAcousticness: 0,
         averageEnergy: 0,
         averageInstrumentalness: 0,
         averageValence: 0,
+        averagePopularity: 0,
       },
     };
   }

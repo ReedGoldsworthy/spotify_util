@@ -41,6 +41,7 @@ const saveTracks = async (playlistID, token) => {
           release_date: track.album.release_date,
           genres: currentGenres,
           spotifyID: track.id,
+          popularity: track.popularity,
           acousticness: audioFeatures.acousticness,
           danceability: audioFeatures.danceability,
           duration: audioFeatures.duration_ms,
