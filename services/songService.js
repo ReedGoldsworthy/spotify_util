@@ -29,7 +29,10 @@ const saveTracks = async (playlistID, token) => {
       }
 
       const audioFeatures = await fetchAudioFeatures(token, track.id);
-      const currentGenres = await fetchGenres(token, track.artists[0].id);
+      const { genres, artistImage } = await fetchGenres(
+        token,
+        track.artists[0].id
+      );
 
       let song = await Song.findOne({ spotifyID: track.id });
 
@@ -39,7 +42,7 @@ const saveTracks = async (playlistID, token) => {
           artist: track.artists[0].name,
           album: track.album.name,
           release_date: track.album.release_date,
-          genres: currentGenres,
+          genres: genres,
           spotifyID: track.id,
           popularity: track.popularity,
           acousticness: audioFeatures.acousticness,
@@ -48,6 +51,7 @@ const saveTracks = async (playlistID, token) => {
           energy: audioFeatures.energy,
           instrumentalness: audioFeatures.instrumentalness,
           valence: audioFeatures.valence,
+          artist_image: artistImage,
           createdAt: Date.now(), // Add createdAt field
         });
 

@@ -15,6 +15,7 @@ const songSchema = new mongoose.Schema({
   energy: { type: Number },
   instrumentalness: { type: Number },
   valence: { type: Number },
+  artist_image: { type: String },
   createdAt: { type: Date, default: Date.now, expires: 3600 }, // TTL index: 3600 seconds = 1 hour
 });
 

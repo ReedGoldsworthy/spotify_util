@@ -21,7 +21,7 @@ const fetchAudioFeatures = async (accessToken, trackID) => {
   }
 };
 
-//fetches the Genre list of artistID from spotify API
+// Fetches the genre list and image of an artist from Spotify API
 const fetchGenres = async (accessToken, artistID) => {
   try {
     const response = await axios.get(
@@ -32,7 +32,17 @@ const fetchGenres = async (accessToken, artistID) => {
         },
       }
     );
-    return response.data.genres;
+
+    const { genres, images } = response.data;
+
+    // Check if images array is available and has at least one item
+    const artistImage =
+      images && images.length > 0 ? images[0].url : "default_image_url"; // Use a placeholder image URL or null
+
+    return {
+      genres,
+      artistImage,
+    };
   } catch (error) {
     console.error("Error fetching artist genres:", error.message);
     throw new Error("Failed to fetch artist genres");

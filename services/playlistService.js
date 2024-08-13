@@ -18,7 +18,7 @@ const savePlaylist = async (userId, spotifyPlaylist) => {
   await playlist.save();
 };
 
-// Aggregates data to count occurrences of each artist in a playlist from our DB.
+// Aggregates data to count occurrences of each artist in a playlist and get their artist_image from our DB.
 const getArtists = async (playlistID) => {
   try {
     const result = await Playlist.aggregate([
@@ -41,12 +41,23 @@ const getArtists = async (playlistID) => {
       },
       {
         $group: {
-          _id: "$songDetails.artist", // Group by artist
+          _id: {
+            artist: "$songDetails.artist",
+            artist_image: "$songDetails.artist_image", // Include artist_image in the group by
+          },
           count: { $sum: 1 }, // Count occurrences
         },
       },
       {
         $sort: { count: -1 }, // Optional: Sort by count in descending order
+      },
+      {
+        $project: {
+          _id: 0,
+          artist: "$_id.artist",
+          artist_image: "$_id.artist_image",
+          count: 1,
+        },
       },
     ]);
 
