@@ -16,6 +16,8 @@ const savePlaylist = async (userId, spotifyPlaylist) => {
   });
 
   await playlist.save();
+
+  return playlist;
 };
 
 // Aggregates data to count occurrences of each artist in a playlist and get their artist_image from our DB.

@@ -115,10 +115,92 @@ const fetchSpotifyProfile = async (accessToken) => {
   }
 };
 
+// Fetch all tracks from a playlist, handling pagination if necessary
+const fetchTracks = async (playlistID, token) => {
+  const tracks = [];
+  let url = `https://api.spotify.com/v1/playlists/${playlistID}/tracks?limit=100`;
+
+  while (url) {
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = response.data;
+    tracks.push(...data.items.map((song) => song.track));
+
+    url = data.next; // Update URL to fetch the next page of results
+  }
+
+  return tracks;
+};
+
+//sends POST request to spotify API to create a new playlist using the input parameters
+const createPlaylist = async (
+  userId,
+  accessToken,
+  playlistName,
+  playlistDescription = "",
+  isPublic
+) => {
+  try {
+    const response = await axios.post(
+      `https://api.spotify.com/v1/users/${userId}/playlists`,
+      {
+        name: playlistName,
+        description: playlistDescription,
+        public: isPublic, // Set to `true` if you want the playlist to be public
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error creating playlist:",
+      error.response ? error.response.data : error.message
+    );
+    throw new Error("Failed to create playlist");
+  }
+};
+
+//sends POST request to spotify API to add tracks (trackIds) into the selected playlist (playlistId)
+const addTracksToPlaylist = async (playlistId, token, trackIds) => {
+  try {
+    const response = await axios.post(
+      `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+      {
+        uris: trackIds.map((id) => `spotify:track:${id}`),
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  } catch (error) {
+    console.error(
+      "Error adding tracks to playlist:",
+      error.response ? error.response.data : error.message
+    );
+    throw new Error("Failed to add tracks to playlist");
+  }
+};
+
 module.exports = {
   fetchAudioFeatures,
   fetchGenres,
   fetchPlaylists,
   fetchSpotifyProfile,
   fetchToken,
+  fetchTracks,
+  createPlaylist,
+  addTracksToPlaylist,
 };

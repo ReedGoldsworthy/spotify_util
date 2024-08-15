@@ -5,13 +5,19 @@ const User = require("../models/user");
 const Song = require("../models/song");
 
 const { saveTracks } = require("../services/songService");
+const {
+  createPlaylist,
+  addTracksToPlaylist,
+} = require("../services/spotifyService"); // Import the createPlaylist function
 
 const {
   getArtists,
   getYears,
   getGenres,
   getAttributes,
+  savePlaylist,
 } = require("../services/playlistService");
+const playlist = require("../models/playlist");
 
 //this route returns all playlists from our DB, might want to specify a user to get playlists from in future
 dataRouter.get("/playlist", async (req, res) => {
@@ -106,6 +112,49 @@ dataRouter.get("/:userID/playlist/:id/info", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send("Internal server error getting playlist stats");
+  }
+});
+
+//this route takes a user id and playlist info in the body and creates a new spotify playlist for the user.
+dataRouter.post("/:userID/playlist", async (req, res) => {
+  try {
+    const { userID } = req.params;
+    const {
+      playlistName,
+      playlistDescription = "",
+      isPublic = false,
+      trackIDs = [],
+    } = req.body;
+
+    // Fetch user from the database
+    const user = await User.findOne({ displayName: userID });
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    //Call the createPlaylist function to create the playlist on Spotify
+    const playlist = await createPlaylist(
+      user.spotifyId,
+      user.accessToken,
+      playlistName,
+      playlistDescription,
+      isPublic
+    );
+
+    // Add the tracks to the newly created playlist
+    if (trackIDs.length > 0) {
+      await addTracksToPlaylist(playlist.id, user.accessToken, trackIDs);
+    }
+
+    const savedPlaylist = await savePlaylist(user._id, playlist);
+
+    // Optionally, you could save the new playlist to your database here
+
+    res.json(savedPlaylist);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal server error creating playlist");
   }
 });
 
