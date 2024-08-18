@@ -44,8 +44,15 @@ const fetchGenres = async (accessToken, artistID) => {
       artistImage,
     };
   } catch (error) {
-    console.error("Error fetching artist genres:", error.message);
-    throw new Error("Failed to fetch artist genres");
+    if (error.response && error.response.status === 429) {
+      const retryAfter = error.response.headers["retry-after"] || 1;
+      console.log(`Rate limited, retrying after ${retryAfter} seconds...`);
+      await new Promise((res) => setTimeout(res, retryAfter * 1000));
+      return fetchGenres(accessToken, ArtistID);
+    } else {
+      console.error("Error fetching track audio features:", error);
+      throw error;
+    }
   }
 };
 
