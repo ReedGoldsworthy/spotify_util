@@ -47,6 +47,15 @@ const createUser = async (accessToken) => {
         await savePlaylist(user._id, playlist);
       }
 
+      //Create and save liked songs playlist
+      const likedSongs = {
+        description: "All the users liked songs",
+        id: "LikedSongs",
+        name: "Liked Songs",
+      };
+
+      await savePlaylist(user._id, likedSongs);
+
       // Return the newly created user data
       return user;
     }

@@ -3,7 +3,7 @@ const axios = require("axios");
 const querystring = require("querystring");
 const config = require("../utils/config"); // Your Spotify credentials
 
-//fetches Track Audio Features from spotify API
+// Fetches Track Audio Features from Spotify API
 const fetchAudioFeatures = async (accessToken, trackID) => {
   try {
     const response = await axios.get(
@@ -16,8 +16,15 @@ const fetchAudioFeatures = async (accessToken, trackID) => {
     );
     return response.data;
   } catch (error) {
-    console.error("Error fetching track audio features:", error.message);
-    throw new Error("Failed to fetch track audio features");
+    if (error.response && error.response.status === 429) {
+      const retryAfter = error.response.headers["retry-after"] || 60;
+      console.log(`Rate limited, retrying after ${retryAfter} seconds...`);
+      await new Promise((res) => setTimeout(res, retryAfter * 1000));
+      return fetchAudioFeatures(accessToken, trackID);
+    } else {
+      console.error("Error fetching track audio features:", error);
+      throw error;
+    }
   }
 };
 
@@ -45,7 +52,7 @@ const fetchGenres = async (accessToken, artistID) => {
     };
   } catch (error) {
     if (error.response && error.response.status === 429) {
-      const retryAfter = error.response.headers["retry-after"] || 1;
+      const retryAfter = error.response.headers["retry-after"] || 50;
       console.log(`Rate limited, retrying after ${retryAfter} seconds...`);
       await new Promise((res) => setTimeout(res, retryAfter * 1000));
       return fetchGenres(accessToken, ArtistID);
@@ -143,6 +150,42 @@ const fetchTracks = async (playlistID, token) => {
   return tracks;
 };
 
+// Fetch all Liked Songs from a user, continuing to call nextURL until all songs are saved
+const fetchLikedSongs = async (accessToken) => {
+  let likedSongs = [];
+  let nextUrl = "https://api.spotify.com/v1/me/tracks?limit=50"; // Initial URL to fetch the first batch
+
+  try {
+    while (nextUrl) {
+      const response = await axios.get(nextUrl, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      // Process the current batch of songs
+      likedSongs.push(
+        ...response.data.items.map((item) => ({
+          name: item.track.name,
+          artists: item.track.artists,
+          album: item.track.album.name,
+          release_date: item.track.album.release_date,
+          id: item.track.id,
+          popularity: item.track.popularity,
+        }))
+      );
+
+      // Update nextUrl to the URL for the next page of results
+      nextUrl = response.data.next;
+    }
+
+    return likedSongs;
+  } catch (error) {
+    console.error("Error fetching liked songs:", error);
+    return null;
+  }
+};
+
 //sends POST request to spotify API to create a new playlist using the input parameters
 const createPlaylist = async (
   userId,
@@ -207,6 +250,7 @@ module.exports = {
   fetchPlaylists,
   fetchSpotifyProfile,
   fetchToken,
+  fetchLikedSongs,
   fetchTracks,
   createPlaylist,
   addTracksToPlaylist,

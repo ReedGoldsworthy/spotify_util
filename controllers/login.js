@@ -6,7 +6,7 @@ const loginRouter = express.Router();
 
 loginRouter.get("/", (req, res) => {
   const scope =
-    "user-read-private user-read-email,user-read-private,user-read-email,playlist-read-private,playlist-modify-public, playlist-modify-private,";
+    "user-read-private user-read-email,user-read-private,user-read-email,playlist-read-private,playlist-modify-public, playlist-modify-private,user-library-read,";
   const authorizationUrl =
     "http://accounts.spotify.com/authorize?" +
     querystring.stringify({

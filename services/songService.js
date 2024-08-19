@@ -4,12 +4,18 @@ const {
   fetchAudioFeatures,
   fetchGenres,
   fetchTracks,
+  fetchLikedSongs,
 } = require("./spotifyService");
 
 // gets tracks of a playlist from playlistID and stores tracks into DB. Function uses fetchGenres & fetchAudioFeatures to get details about track
 const saveTracks = async (playlistID, token) => {
   try {
-    const tracks = await fetchTracks(playlistID, token); // Fetch all tracks with pagination
+    let tracks = [];
+    if (playlistID === "LikedSongs") {
+      tracks = await fetchLikedSongs(token);
+    } else {
+      tracks = await fetchTracks(playlistID, token); // Fetch all tracks with pagination
+    }
 
     const savedSongIDs = [];
 
