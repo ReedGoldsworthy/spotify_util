@@ -4,6 +4,7 @@ const config = require("../utils/config"); // Spotify credentials
 
 const loginRouter = express.Router();
 
+//this route
 loginRouter.get("/", (req, res) => {
   const scope =
     "user-read-private user-read-email,user-read-private,user-read-email,playlist-read-private,playlist-modify-public, playlist-modify-private,user-library-read,";
@@ -13,7 +14,7 @@ loginRouter.get("/", (req, res) => {
       response_type: "code",
       client_id: config.CLIENT_ID,
       scope: scope,
-      redirect_uri: "http://localhost:3001/callback", // Your frontend redirect URI
+      redirect_uri: `http://localhost:${config.PORT}/callback`, // Your frontend redirect URI
       show_dialog: true,
     });
 
