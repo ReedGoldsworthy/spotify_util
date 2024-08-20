@@ -1,7 +1,7 @@
 const express = require("express");
 const querystring = require("querystring");
 const config = require("../utils/config"); // Spotify credentials
-const logger = require("./utils/logger");
+const logger = require("../utils/logger");
 
 const loginRouter = express.Router();
 
