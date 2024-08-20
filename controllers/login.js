@@ -7,7 +7,6 @@ const loginRouter = express.Router();
 
 //this route
 loginRouter.get("/", (req, res) => {
-  logger.info("CLIENT ID:", config.CLIENT_ID);
   const scope =
     "user-read-private user-read-email,user-read-private,user-read-email,playlist-read-private,playlist-modify-public, playlist-modify-private,user-library-read,";
   const authorizationUrl =
