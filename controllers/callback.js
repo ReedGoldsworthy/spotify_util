@@ -79,7 +79,9 @@ callbackRouter.get("/", async (req, res) => {
     const user = await createUser(access_token);
 
     // Redirect to your frontend with tokens as query parameters
-    res.redirect(`/?user=${user.displayName}&access_token=${access_token}`);
+    res.redirect(
+      `https://spotify-util.onrender.com/?user=${user.displayName}&access_token=${access_token}`
+    );
   } catch (error) {
     console.error(
       "Error recieving and storing user user in callback:",
