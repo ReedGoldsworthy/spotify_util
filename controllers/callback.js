@@ -79,6 +79,9 @@ callbackRouter.get("/", async (req, res) => {
     const user = await createUser(access_token);
 
     // Redirect to your frontend with tokens as query parameters
+    // res.redirect(
+    //   `http://localhost:5173/?user=${user.displayName}&access_token=${access_token}`
+    // ); // for testing
     res.redirect(
       `https://spotify-util.onrender.com/?user=${user.displayName}&access_token=${access_token}`
     );

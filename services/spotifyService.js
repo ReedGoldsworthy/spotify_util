@@ -71,7 +71,8 @@ const fetchToken = async (code) => {
       querystring.stringify({
         grant_type: "authorization_code",
         code: code,
-        redirect_uri: `https://spotify-util.onrender.com/callback`, // Backend callback URI
+        // redirect_uri: `http://localhost:${config.PORT}/callback`, // Backend callback URI
+        redirect_uri: `https://spotify-util.onrender.com/callback`, // Backend callback URI for render
       }),
       {
         headers: {

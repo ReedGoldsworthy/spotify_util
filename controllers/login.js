@@ -15,7 +15,8 @@ loginRouter.get("/", (req, res) => {
       response_type: "code",
       client_id: config.CLIENT_ID,
       scope: scope,
-      redirect_uri: `https://spotify-util.onrender.com/callback`, // Your frontend redirect URI
+      // redirect_uri: `http://localhost:${config.PORT}/callback`, // Your frontend redirect URI
+      redirect_uri: `https://spotify-util.onrender.com/callback`, // Your frontend redirect URI for render
       show_dialog: true,
     });
 
