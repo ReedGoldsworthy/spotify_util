@@ -27,11 +27,8 @@
 
   <p align="center">
     A utility tool for enhancing Spotify experiences by providing advanced playlist management, detailed data visualizations, and seamless playlist creation.
-    <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://spotify-util.onrender.com/">View Demo</a>
+    
+  <a href="https://spotify-util.onrender.com/">View Demo » (currently only allowing authorized users full website functionality)</a>
     .
   </p>
 </div>
@@ -104,7 +101,6 @@ This section lists the major frameworks and libraries used in this project.
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
 To get a local copy up and running follow these simple example steps.
 
 ### Prerequisites
@@ -183,12 +179,6 @@ Don't forget to give the project a star! Thanks again!
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
-
-### Top contributors:
-
-<a href="https://github.com/othneildrew/Best-README-Template/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=othneildrew/Best-README-Template" alt="contrib.rocks image" />
-</a>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
