@@ -101,32 +101,30 @@ This section lists the major frameworks and libraries used in this project.
 <!-- GETTING STARTED -->
 ## Getting Started
 
-To get a local copy up and running follow these simple example steps.
+To get a local copy up and running follow these steps.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
+* Download npm
   ```sh
   npm install npm@latest -g
   ```
 
 ### Installation
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
-
-1. Get a free API Key at [https://example.com](https://example.com)
+1. Create an account then get a Client ID & Client Secret at https://developer.spotify.com/dashboard
 2. Clone the repo
    ```sh
-   git clone https://github.com/github_username/repo_name.git
+   git clone https://github.com/ReedGoldsworthy/spotify_util.git
    ```
 3. Install NPM packages
    ```sh
    npm install
    ```
-4. Enter your API in `config.js`
+4. Enter your Client ID & Client Secret in `config.js`
    ```js
-   const API_KEY = 'ENTER YOUR API';
+   const CLIENT_ID = 'ENTER YOUR CLIENT ID';
+   const CLIENT_SECRET = 'ENTER YOUR CLIENT SECRET';
    ```
 5. Change git remote url to avoid accidental pushes to base project
    ```sh
@@ -141,9 +139,27 @@ _Below is an example of how you can instruct your audience on installing and set
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+### Demo Video:
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+### Track List
+- The Track List page allows users to view and manage their playlist tracks in a sortable and filterable table format. Users can sort tracks by various attributes, apply filters to find specific songs, and stage playlists for further use, providing an organized and efficient way to interact with their music collection.
+<p></p>
+
+![stage1](https://github.com/user-attachments/assets/04a0dfe2-3ff1-4060-a643-9260296f7774)
+
+
+### Data Visualization
+- The Data Visualization page provides an interactive overview of playlist data, featuring visualizations such as pie charts for genre breakdowns, graphs for release years, and detailed attribute displays. It helps users analyze their playlists by offering insights into music characteristics like Danceability, Energy, Popularity and more.
+<p></p>
+
+![p1](https://github.com/user-attachments/assets/a43987fb-3f72-43da-bce5-57c55c80f179)
+
+### Create
+- The Create page allows users to assemble staged tracks into new playlists directly on Spotify. It provides an intuitive interface for selecting and organizing songs, facilitating the creation of personalized playlists based on user preferences.
+<p></p>
+
+![create](https://github.com/user-attachments/assets/9c792f1b-d8cd-4005-a067-c5140724b82d)
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -152,15 +168,10 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
-
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
+- [ ] Change FetchAudioFeatures to fetch multiple songs at once
+- [ ] Make it so CreatePlaylist can create playlists bigger than 100 tracks
+- [ ] Make application follow Spotify's extension request guidelines
+- [ ] Change getAttributes in playlist service to only round values after the averages are computed.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -171,8 +182,7 @@ See the [open issues](https://github.com/othneildrew/Best-README-Template/issues
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
+If you have a suggestion that would make this better, please fork the repo and create a pull request.
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -196,9 +206,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
-
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Reed Goldsworthy - Reedgoldsworthy2@gmail.com
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -207,16 +215,10 @@ Project Link: [https://github.com/your_username/repo_name](https://github.com/yo
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
+I would like to acknowledge these music organization services. They were a big inspiration, and are useful tools for organizing music.
 
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-* [Malven's Grid Cheatsheet](https://grid.malven.co/)
-* [Img Shields](https://shields.io)
-* [GitHub Pages](https://pages.github.com)
-* [Font Awesome](https://fontawesome.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
+* https://www.chosic.com/spotify-playlist-analyzer/
+* http://organizeyourmusic.playlistmachinery.com/index.html
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
