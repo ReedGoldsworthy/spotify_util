@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "test": "cross-env  NODE_ENV=test node --test"
   },
   "author": "",
   "license": "ISC",
@@ -20,6 +20,8 @@
     "querystring": "^0.2.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4"
+    "cross-env": "^7.0.3",
+    "nodemon": "^3.1.4",
+    "supertest": "^7.0.0"
   }
 }

@@ -17,7 +17,6 @@ const {
   getAttributes,
   savePlaylist,
 } = require("../services/playlistService");
-const playlist = require("../models/playlist");
 
 //this route returns all playlists from our DB, might want to specify a user to get playlists from in future
 dataRouter.get("/playlist", async (req, res) => {

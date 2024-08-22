@@ -1,6 +1,7 @@
 const express = require("express");
 const axios = require("axios");
 const User = require("../models/user");
+const config = require("../utils/config");
 const {
   fetchSpotifyProfile,
   fetchPlaylists,
@@ -80,16 +81,14 @@ callbackRouter.get("/", async (req, res) => {
 
     // Redirect to your frontend with tokens as query parameters
     // res.redirect(
-    //   `http://localhost:5173/?user=${user.displayName}&access_token=${access_token}`
-    // ); // for testing
+    //   `http://localhost:${config.PORT}/?user=${user.displayName}&access_token=${access_token}`
+    // );
+
     res.redirect(
       `https://spotify-util.onrender.com/?user=${user.displayName}&access_token=${access_token}`
     );
   } catch (error) {
-    console.error(
-      "Error recieving and storing user user in callback:",
-      error.response.data
-    );
+    console.error("Error recieving and storing user user in callback:", error);
     res.status(500).send("Failed to get access token");
   }
 });
