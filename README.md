@@ -86,7 +86,7 @@ Spotify-Util was developed to provide a more robust tool for analyzing, organizi
 
 ### Built With
 
-This section lists the major frameworks and libraries used in this project.
+
 
 * <a href="https://nodejs.org/" target="_blank"><img src="https://img.shields.io/badge/Node.js-339933?style=flat&logo=node.js&logoColor=white" alt="Node.js" width="150" height="40"/></a>
 * <a href="https://expressjs.com/" target="_blank"><img src="https://img.shields.io/badge/Express.js-%23404d59?style=flat&logo=express&logoColor=%2361DAFB" alt="Express" width="150" height="40"/></a>
